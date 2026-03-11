@@ -78,6 +78,7 @@
             .card-container {
                 box-shadow: none; border: 1px dashed #ccc; border-radius: 0; page-break-inside: avoid;
             }
+            #zoomWrapper { transform: none !important; }
             .hide-on-print { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
@@ -170,8 +171,20 @@
     </div>
 
     <!-- Preview Area -->
-    <div class="w-full md:w-2/3 lg:w-[72%] bg-[#d1d5db] h-full overflow-y-auto p-4 md:p-10 preview-section flex flex-col items-center gap-12" style="background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');">
+    <div class="w-full md:w-2/3 lg:w-[72%] bg-[#d1d5db] h-full overflow-y-auto p-4 md:p-10 preview-section relative" style="background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');">
         
+        <!-- Zoom Controls (Floating) -->
+        <div class="fixed bottom-6 right-6 bg-white/90 backdrop-blur rounded-full shadow-lg border border-gray-200 flex items-center p-1.5 z-50 hide-on-print transition hover:bg-white">
+            <button onclick="changeZoom(-0.1)" class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-gray-200 text-gray-700 transition" title="ย่อ"><i class="fas fa-minus text-sm"></i></button>
+            <span id="zoomLevelDisplay" class="text-xs font-bold px-2 w-14 text-center text-gray-700">100%</span>
+            <button onclick="changeZoom(0.1)" class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-gray-200 text-gray-700 transition" title="ขยาย"><i class="fas fa-plus text-sm"></i></button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            <button onclick="resetZoom()" class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-gray-200 text-gray-700 transition" title="รีเซ็ตพอดีหน้าจอ"><i class="fas fa-compress text-sm"></i></button>
+        </div>
+
+        <!-- Wrapper for Zooming -->
+        <div id="zoomWrapper" class="w-full flex flex-col items-center gap-12 transition-transform duration-200 origin-top pb-16">
+
         <!-- ================= CARD FRONT ================= -->
         <div>
             <h3 class="text-gray-700 mb-3 font-semibold hide-on-print text-center text-sm bg-white/70 inline-block px-4 py-1 rounded-full backdrop-blur-sm">ด้านหน้า (Front)</h3>
@@ -260,6 +273,7 @@
             </div>
         </div>
 
+        </div> <!-- Close zoomWrapper -->
     </div>
 
     <script>
@@ -325,6 +339,27 @@
         // Update Logo Size
         function updateLogoSize(value) {
             document.getElementById('logoImg').style.width = value + 'px';
+        }
+
+        // --- Zoom Functions ---
+        let currentZoom = 1;
+
+        function changeZoom(delta) {
+            currentZoom += delta;
+            // จำกัดการซูมอยู่ระหว่าง 50% ถึง 250%
+            if (currentZoom < 0.5) currentZoom = 0.5;
+            if (currentZoom > 2.5) currentZoom = 2.5;
+            applyZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            document.getElementById('zoomWrapper').style.transform = `scale(${currentZoom})`;
+            document.getElementById('zoomLevelDisplay').innerText = Math.round(currentZoom * 100) + '%';
         }
     </script>
 </body>
