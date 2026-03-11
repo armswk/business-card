@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amway Business Card - Pastel Themes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* --- Theme Variables --- */
+        :root {
+            /* Green Theme */
+            --text-green: #233e26;
+            --accent-green: #2b4931;
+
+            /* Orange Theme */
+            --text-orange: #463c31;
+            --accent-orange: #3e382d;
+
+            /* Pink Theme */
+            --text-pink: #5c3340;
+            --accent-pink: #8f4f64;
+        }
+
+        /* Card Size: 85mm x 55mm */
+        .card-container {
+            width: 85mm;
+            height: 55mm;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+            transition: background-image 0.3s ease, color 0.3s ease;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* --- Theme Styles with Background Images --- */
+        body[data-theme="green"] .card-container { 
+            background-image: url('https://lh3.googleusercontent.com/d/1GiicckNnOs3w4QabSQOrrPVGGzweh8Ar'); 
+            color: var(--text-green); 
+        }
+        body[data-theme="green"] .text-accent { color: var(--accent-green); }
+        body[data-theme="green"] .bg-accent { background-color: var(--accent-green); }
+        body[data-theme="green"] .border-accent { border-color: #8ca38c; }
+        
+        body[data-theme="orange"] .card-container { 
+            background-image: url('https://lh3.googleusercontent.com/d/18iV5Iu9Xy1AUlN1yXx_Rnxajhgf7GiDV'); 
+            color: var(--text-orange); 
+        }
+        body[data-theme="orange"] .text-accent { color: var(--accent-orange); }
+        body[data-theme="orange"] .bg-accent { background-color: var(--accent-orange); }
+        body[data-theme="orange"] .border-accent { border-color: #cda886; }
+
+        body[data-theme="pink"] .card-container { 
+            background-image: url('https://lh3.googleusercontent.com/d/1KcK0mUrY4a6ljdQXlCVLVigLQCl56vXB'); 
+            color: var(--text-pink); 
+        }
+        body[data-theme="pink"] .text-accent { color: var(--accent-pink); }
+        body[data-theme="pink"] .bg-accent { background-color: var(--accent-pink); }
+        body[data-theme="pink"] .border-accent { border-color: #d18ba2; }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; }
+            body * { visibility: hidden; }
+            .preview-section, .preview-section * { visibility: visible; }
+            .preview-section { 
+                position: absolute; left: 0; top: 0; width: 100%;
+                display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 0; background: white;
+            }
+            .card-container {
+                box-shadow: none; border: 1px dashed #ccc; border-radius: 0; page-break-inside: avoid;
+            }
+            .hide-on-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden" data-theme="orange">
+
+    <!-- Sidebar Editor -->
+    <div class="w-full md:w-1/3 lg:w-[28%] bg-white border-r shadow-xl h-full overflow-y-auto p-6 hide-on-print z-50">
+        <h1 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-palette text-[#f09623] mr-2"></i> ออกแบบนามบัตร
+        </h1>
+
+        <!-- Theme Selector -->
+        <div class="mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <label class="block text-sm font-bold text-gray-700 mb-2">เลือกธีม (Theme)</label>
+            <div class="flex gap-2">
+                <button id="btn-theme-green" onclick="setTheme('green')" class="flex-1 py-2 bg-[#eaf1e7] border-2 border-[#8ca38c] rounded text-[#2e4431] text-xs font-semibold hover:bg-[#d5e4d1] transition">🌿 เขียว</button>
+                <button id="btn-theme-orange" onclick="setTheme('orange')" class="flex-1 py-2 bg-[#fae4d1] border-2 border-[#f09623] rounded text-[#463c31] text-xs font-semibold hover:bg-[#f3d4b6] transition">🍊 ส้ม</button>
+                <button id="btn-theme-pink" onclick="setTheme('pink')" class="flex-1 py-2 bg-[#fcecf3] border-2 border-[#f4a7c8] rounded text-[#5c3340] text-xs font-semibold hover:bg-[#fadce7] transition">🌸 ชมพู</button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">รูปโปรไฟล์ (หน้าตรง)</label>
+                <input type="file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 border border-gray-200 rounded p-1" onchange="updateImage(event)">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
+                <input type="text" value="กานดา สดชื่น" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#f09623] text-sm" onkeyup="updateField('nameDisplay', this.value)">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">สถานะ / บริการ (ขึ้นบรรทัดใหม่ได้)</label>
+                <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#f09623] text-sm" onkeyup="updateField('titleDisplay', this.value)">🌿 Nutrition 
+✨ Face Spa 
+❤️ Health</textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ (ด้านหน้า)</label>
+                <input type="text" value="086-111-2222" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#f09623] text-sm" onkeyup="updateField('phoneDisplay', this.value)">
+            </div>
+
+            <hr class="my-4 border-gray-200">
+            <h3 class="text-sm font-bold text-gray-700 mb-2">ข้อมูลด้านหลัง (3 คอลัมน์)</h3>
+
+            <!-- Col 1 -->
+            <div class="bg-gray-50 p-3 rounded border border-gray-100 mb-3">
+                <label class="block text-[11px] font-bold text-gray-600 mb-1">คอลัมน์ 1 (เว็บไซต์)</label>
+                <input type="text" value="business ธุรกิจ" class="w-full px-2 py-1 mb-1 border border-gray-300 rounded text-xs" onkeyup="updateField('c1-1', this.value)">
+                <input type="text" value="www.amway.com/" class="w-full px-2 py-1 mb-1 border border-gray-300 rounded text-xs" onkeyup="updateField('c1-2', this.value)">
+                <input type="text" value="kanda_abo" class="w-full px-2 py-1 border border-gray-300 rounded text-xs" onkeyup="updateField('c1-3', this.value)">
+            </div>
+
+            <!-- Col 2 -->
+            <div class="bg-gray-50 p-3 rounded border border-gray-100 mb-3">
+                <label class="block text-[11px] font-bold text-gray-600 mb-1">คอลัมน์ 2 (อีเมล)</label>
+                <input type="text" value="business email" class="w-full px-2 py-1 mb-1 border border-gray-300 rounded text-xs" onkeyup="updateField('c2-1', this.value)">
+                <input type="text" value="email@amway.com" class="w-full px-2 py-1 mb-1 border border-gray-300 rounded text-xs" onkeyup="updateField('c2-2', this.value)">
+                <input type="text" value="kanda_abo" class="w-full px-2 py-1 border border-gray-300 rounded text-xs" onkeyup="updateField('c2-3', this.value)">
+            </div>
+
+            <!-- Col 3 (QR Code) -->
+            <div class="bg-gray-50 p-3 rounded border border-gray-100 mb-3">
+                <label class="block text-[11px] font-bold text-gray-600 mb-1">คอลัมน์ 3 (QR Code)</label>
+                <input type="text" value="https://www.amway.co.th/" placeholder="ใส่ลิงก์สำหรับแสกน" class="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-[#f09623]" onchange="generateQR(this.value)" onkeyup="if(event.key === 'Enter') generateQR(this.value)">
+            </div>
+
+            <hr class="my-4 border-gray-200">
+            <h3 class="text-sm font-bold text-gray-700 mb-2">โลโก้ (ด้านหลัง)</h3>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">อัปโหลดโลโก้ใหม่</label>
+                <input type="file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 border border-gray-200 rounded p-1" onchange="updateLogo(event)">
+            </div>
+            <div class="mt-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">ปรับขนาดโลโก้</label>
+                <input type="range" id="logoSizeInput" min="50" max="250" value="130" class="w-full" oninput="updateLogoSize(this.value)">
+            </div>
+        </div>
+
+        <div class="mt-8 mb-4">
+            <button onclick="window.print()" class="w-full bg-gray-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-black transition duration-200">
+                <i class="fas fa-print mr-2"></i> พิมพ์ / Save PDF
+            </button>
+            <p class="text-xs text-center text-gray-500 mt-3">ให้ตั้งค่า Scale เป็น 100% หรือ Default ตอนพิมพ์</p>
+        </div>
+    </div>
+
+    <!-- Preview Area -->
+    <div class="w-full md:w-2/3 lg:w-[72%] bg-[#d1d5db] h-full overflow-y-auto p-4 md:p-10 preview-section flex flex-col items-center gap-12" style="background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');">
+        
+        <!-- ================= CARD FRONT ================= -->
+        <div>
+            <h3 class="text-gray-700 mb-3 font-semibold hide-on-print text-center text-sm bg-white/70 inline-block px-4 py-1 rounded-full backdrop-blur-sm">ด้านหน้า (Front)</h3>
+            <div id="cardFront" class="card-container">
+                
+                <!-- Content Wrapper (Front) -->
+                <div class="relative z-10 w-full h-full flex items-center px-6">
+                    
+                    <!-- Avatar (Left) -->
+                    <div class="flex-shrink-0 mr-5 mt-2 ml-4">
+                        <!-- Border is white with a soft shadow -->
+                        <div class="w-[115px] h-[115px] rounded-full overflow-hidden border-[5px] border-white shadow-[0_2px_15px_rgba(0,0,0,0.08)] bg-white flex items-center justify-center">
+                            <img id="profileImg" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E" alt="Profile" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Details (Right) -->
+                    <div class="flex-1 flex flex-col justify-center min-w-0 pr-6 mt-1 text-accent">
+                        <!-- Name & Title -->
+                        <div class="font-medium leading-tight">
+                            <h2 id="nameDisplay" class="text-[19px] tracking-wide mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis font-semibold">กานดา สดชื่น</h2>
+                            <!-- รองรับหลายบรรทัด สีน้ำตาลหม่น -->
+                            <p id="titleDisplay" class="text-[12px] font-normal opacity-90 whitespace-pre-line leading-relaxed text-[#5a5042]">🌿 Nutrition 
+✨ Face Spa 
+❤️ Health</p>
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div class="flex items-center mt-3">
+                            <div class="w-[22px] h-[22px] rounded-full bg-accent flex items-center justify-center mr-2.5 shrink-0 shadow-sm">
+                                <i class="fas fa-phone-alt text-[10px] text-white"></i>
+                            </div>
+                            <span id="phoneDisplay" class="text-[14px] font-normal tracking-wide whitespace-nowrap">086-111-2222</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CARD BACK ================= -->
+        <div>
+            <h3 class="text-gray-700 mb-3 font-semibold hide-on-print text-center text-sm bg-white/70 inline-block px-4 py-1 rounded-full backdrop-blur-sm">ด้านหลัง (Back)</h3>
+            <div id="cardBack" class="card-container flex flex-col justify-between items-center text-center">
+                
+                <!-- Top Center: Logo & Slogan -->
+                <div class="relative z-10 w-full flex flex-col items-center mt-6">
+                    <div class="flex items-center justify-center min-h-[50px]">
+                        <img id="logoImg" src="https://lh3.googleusercontent.com/d/1AdAsSt0-L6vqNFNchvjNsjBUo-oAt_FN" alt="Amway Logo" style="width: 130px; height: auto;" class="object-contain">
+                    </div>
+                    <p class="text-[15px] text-accent font-medium mt-2 tracking-wide">“สร้างสรรค์ชีวิตที่ดีกว่า”</p>
+                </div>
+                
+                <!-- Bottom Contact Row (3 Columns) -->
+                <div class="relative z-10 w-full px-6 pb-6 mt-1 text-accent">
+                    <div class="flex justify-between items-center w-full text-[10px] leading-tight">
+                        
+                        <!-- Col 1 -->
+                        <div class="flex-1 text-center pr-2">
+                            <div id="c1-1" class="mb-0.5">business ธุรกิจ</div>
+                            <div id="c1-2">www.amway.com/</div>
+                            <div id="c1-3">kanda_abo</div>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="w-px h-8 border-accent border-l opacity-50"></div>
+                        
+                        <!-- Col 2 -->
+                        <div class="flex-1 text-center px-1">
+                            <div id="c2-1" class="mb-0.5">business email</div>
+                            <div id="c2-2">email@amway.com</div>
+                            <div id="c2-3">kanda_abo</div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="w-px h-8 border-accent border-l opacity-50"></div>
+                        
+                        <!-- Col 3 (QR Code) -->
+                        <div class="flex-1 flex justify-center items-center pl-2">
+                            <div class="bg-white p-1 rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.08)] inline-block">
+                                <img id="qrCodeBack" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.amway.co.th/&margin=0" alt="QR Code" class="w-[42px] h-[42px]">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Set Theme Function
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            
+            // Reset all buttons
+            const btnGreen = document.getElementById('btn-theme-green');
+            const btnOrange = document.getElementById('btn-theme-orange');
+            const btnPink = document.getElementById('btn-theme-pink');
+            
+            btnGreen.classList.remove('ring-2', 'ring-offset-2', 'ring-[#8ca38c]', 'scale-95');
+            btnOrange.classList.remove('ring-2', 'ring-offset-2', 'ring-[#f09623]', 'scale-95');
+            btnPink.classList.remove('ring-2', 'ring-offset-2', 'ring-[#f4a7c8]', 'scale-95');
+            
+            // Set active button
+            if (theme === 'green') {
+                btnGreen.classList.add('ring-2', 'ring-offset-2', 'ring-[#8ca38c]', 'scale-95');
+            } else if (theme === 'orange') {
+                btnOrange.classList.add('ring-2', 'ring-offset-2', 'ring-[#f09623]', 'scale-95');
+            } else if (theme === 'pink') {
+                btnPink.classList.add('ring-2', 'ring-offset-2', 'ring-[#f4a7c8]', 'scale-95');
+            }
+        }
+
+        // Setup Initial Theme Active State
+        window.onload = function() {
+            setTheme('orange'); // Default to orange
+        }
+
+        // Update Text Fields
+        function updateField(elementId, value) {
+            document.getElementById(elementId).innerText = value;
+        }
+
+        // Update Profile Image
+        function updateImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const imgUrl = URL.createObjectURL(file);
+                document.getElementById('profileImg').src = imgUrl;
+            }
+        }
+
+        // Generate QR Code
+        function generateQR(url) {
+            if (!url) return;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}&margin=0`;
+            const qrImg = document.getElementById('qrCodeBack');
+            if (qrImg) qrImg.src = qrUrl;
+        }
+
+        // Update Logo Image
+        function updateLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const imgUrl = URL.createObjectURL(file);
+                document.getElementById('logoImg').src = imgUrl;
+            }
+        }
+
+        // Update Logo Size
+        function updateLogoSize(value) {
+            document.getElementById('logoImg').style.width = value + 'px';
+        }
+    </script>
+</body>
+</html>
