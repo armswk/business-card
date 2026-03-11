@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amway Business Card - Pastel Themes</title>
+    <title>Amway Business Card </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,7 +41,7 @@
             background-repeat: no-repeat;
         }
 
-        /* --- Theme Styles with Background Images --- */
+        /* --- Theme Styles --- */
         body[data-theme="green"] .card-container { 
             background-image: url('https://lh3.googleusercontent.com/d/1GiicckNnOs3w4QabSQOrrPVGGzweh8Ar'); 
             color: var(--text-green); 
@@ -66,17 +66,50 @@
         body[data-theme="pink"] .bg-accent { background-color: var(--accent-pink); }
         body[data-theme="pink"] .border-accent { border-color: #d18ba2; }
 
-        /* Print Styles */
+        /* A4 Hidden by default */
+        #a4Sheet { display: none; }
+
+        /* Print Styles - EXACT MATCH FOR SIGEL DP830 */
         @media print {
+            @page { 
+                size: A4; 
+                margin: 0; 
+            }
             body { background: white; }
             body * { visibility: hidden; }
-            .preview-section, .preview-section * { visibility: visible; }
-            .preview-section { 
+
+            /* IF NORMAL PRINT PREVIEW IS USED (Just 1 card) */
+            body:not(.printing-a4) .preview-section, 
+            body:not(.printing-a4) .preview-section * { visibility: visible; }
+            body:not(.printing-a4) .preview-section { 
                 position: absolute; left: 0; top: 0; width: 100%;
                 display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 0; background: white;
             }
+
+            /* IF A4 SIGEL PRINT MODE IS USED */
+            body.printing-a4 #a4Sheet, 
+            body.printing-a4 #a4Sheet * { visibility: visible; }
+            body.printing-a4 #a4Sheet {
+                display: grid !important;
+                position: absolute;
+                top: 0; left: 0;
+                width: 210mm;
+                height: 297mm;
+                padding-top: 10mm;      /* Sigel Top Margin */
+                padding-left: 15mm;     /* Sigel Left Margin */
+                padding-right: 15mm;    /* Sigel Right Margin */
+                box-sizing: border-box;
+                grid-template-columns: 85mm 85mm;
+                grid-template-rows: repeat(5, 55mm);
+                column-gap: 10mm;       /* Sigel gap between columns */
+                row-gap: 0;             /* Cards touch vertically */
+                background: white;
+            }
+
             .card-container {
-                box-shadow: none; border: 1px dashed #ccc; border-radius: 0; page-break-inside: avoid;
+                box-shadow: none !important; 
+                border: none !important; 
+                page-break-inside: avoid;
             }
             #zoomWrapper { transform: none !important; }
             .hide-on-print { display: none !important; }
@@ -87,7 +120,7 @@
 <body class="h-screen flex flex-col md:flex-row overflow-hidden" data-theme="orange">
 
     <!-- Sidebar Editor -->
-    <div class="w-full md:w-1/3 lg:w-[28%] bg-white border-r shadow-xl h-full overflow-y-auto p-6 hide-on-print z-50">
+    <div class="w-full md:w-1/3 lg:w-[30%] bg-white border-r shadow-xl h-full overflow-y-auto p-6 hide-on-print z-50">
         <h1 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
             <i class="fas fa-palette text-[#f09623] mr-2"></i> ออกแบบนามบัตร
         </h1>
@@ -97,7 +130,7 @@
             <label class="block text-sm font-bold text-gray-700 mb-2">เลือกธีม (Theme)</label>
             <div class="flex gap-2">
                 <button id="btn-theme-green" onclick="setTheme('green')" class="flex-1 py-2 bg-[#eaf1e7] border-2 border-[#8ca38c] rounded text-[#2e4431] text-xs font-semibold hover:bg-[#d5e4d1] transition">🌿 เขียว</button>
-                <button id="btn-theme-orange" onclick="setTheme('orange')" class="flex-1 py-2 bg-[#fae4d1] border-2 border-[#f09623] rounded text-[#463c31] text-xs font-semibold hover:bg-[#f3d4b6] transition">🍊 ส้ม</button>
+                <button id="btn-theme-orange" onclick="setTheme('orange')" class="flex-1 py-2 bg-[#fae4d1] border-2 border-[#f09623] rounded text-[#463c31] text-xs font-semibold hover:bg-[#f3d4b6] transition shadow-inner">🍊 ส้ม</button>
                 <button id="btn-theme-pink" onclick="setTheme('pink')" class="flex-1 py-2 bg-[#fcecf3] border-2 border-[#f4a7c8] rounded text-[#5c3340] text-xs font-semibold hover:bg-[#fadce7] transition">🌸 ชมพู</button>
             </div>
         </div>
@@ -115,7 +148,8 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">สถานะ / บริการ (ขึ้นบรรทัดใหม่ได้)</label>
-                <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#f09623] text-sm" onkeyup="updateField('titleDisplay', this.value)">🌿 • Nutrition 
+                <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#f09623] text-sm" onkeyup="updateField('titleDisplay', this.value)">
+🌿 • Nutrition 
 ✨ • Face Spa 
 ❤️ • Health</textarea>
             </div>
@@ -162,16 +196,23 @@
             </div>
         </div>
 
-        <div class="mt-8 mb-4">
-            <button onclick="window.print()" class="w-full bg-gray-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-black transition duration-200">
-                <i class="fas fa-print mr-2"></i> พิมพ์ / Save PDF
-            </button>
-            <p class="text-xs text-center text-gray-500 mt-3">ให้ตั้งค่า Scale เป็น 100% หรือ Default ตอนพิมพ์</p>
+        <!-- PRINT A4 SIGEL SECTION -->
+        <div class="mt-8 mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 class="text-sm font-bold text-blue-800 mb-2"><i class="fas fa-print"></i> โหมดพิมพ์ลงกระดาษ Sigel (A4)</h3>
+            <p class="text-[11px] text-blue-600 mb-3 leading-tight">ระบบจะเรียง 10 ใบให้อัตโนมัติ (Top 10mm, Left 15mm)<br><b class="text-red-500">ตอนปริ้นให้ตั้งค่า Scale = 100% หรือ Actual Size เสมอ</b></p>
+            <div class="flex flex-col gap-2">
+                <button onclick="printSigelA4('front')" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded shadow hover:bg-blue-700 transition">
+                    พิมพ์ด้านหน้า (10 ใบ)
+                </button>
+                <button onclick="printSigelA4('back')" class="w-full bg-blue-800 text-white font-bold py-2 px-4 rounded shadow hover:bg-blue-900 transition">
+                    พิมพ์ด้านหลัง (10 ใบ)
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Preview Area -->
-    <div class="w-full md:w-2/3 lg:w-[72%] bg-[#d1d5db] h-full overflow-y-auto p-4 md:p-10 preview-section relative" style="background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');">
+    <div class="w-full md:w-2/3 lg:w-[70%] bg-[#d1d5db] h-full overflow-y-auto p-4 md:p-10 preview-section relative" style="background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');">
         
         <!-- Zoom Controls (Floating) -->
         <div class="fixed bottom-6 right-6 bg-white/90 backdrop-blur rounded-full shadow-lg border border-gray-200 flex items-center p-1.5 z-50 hide-on-print transition hover:bg-white">
@@ -195,7 +236,6 @@
                     
                     <!-- Avatar (Left) -->
                     <div class="flex-shrink-0 mr-5 mt-2 ml-4">
-                        <!-- Border is white with a soft shadow -->
                         <div class="w-[115px] h-[115px] rounded-full overflow-hidden border-[5px] border-white shadow-[0_2px_15px_rgba(0,0,0,0.08)] bg-white flex items-center justify-center">
                             <img id="profileImg" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E" alt="Profile" class="w-full h-full object-cover">
                         </div>
@@ -206,10 +246,10 @@
                         <!-- Name & Title -->
                         <div class="font-medium leading-tight">
                             <h2 id="nameDisplay" class="text-[19px] tracking-wide mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis font-semibold">กานดา สดชื่น</h2>
-                            <!-- รองรับหลายบรรทัด สีน้ำตาลหม่น -->
-                            <p id="titleDisplay" class="text-[12px] font-normal opacity-90 whitespace-pre-line leading-relaxed text-[#5a5042]">🌿 Nutrition 
-✨ Face Spa 
-❤️ Health</p>
+                            <p id="titleDisplay" class="text-[12px] font-normal opacity-90 whitespace-pre-line leading-relaxed text-[#5a5042]">
+🌿 • Nutrition 
+✨ • Face Spa 
+❤️ • Health
                         </div>
                         
                         <!-- Phone -->
@@ -275,6 +315,9 @@
 
         </div> <!-- Close zoomWrapper -->
     </div>
+
+    <!-- Hidden A4 Sheet for Printing -->
+    <div id="a4Sheet"></div>
 
     <script>
         // Set Theme Function
@@ -346,7 +389,6 @@
 
         function changeZoom(delta) {
             currentZoom += delta;
-            // จำกัดการซูมอยู่ระหว่าง 50% ถึง 250%
             if (currentZoom < 0.5) currentZoom = 0.5;
             if (currentZoom > 2.5) currentZoom = 2.5;
             applyZoom();
@@ -360,6 +402,31 @@
         function applyZoom() {
             document.getElementById('zoomWrapper').style.transform = `scale(${currentZoom})`;
             document.getElementById('zoomLevelDisplay').innerText = Math.round(currentZoom * 100) + '%';
+        }
+
+        // --- Print A4 Sigel DP830 Logic ---
+        function printSigelA4(side) {
+            const sheet = document.getElementById('a4Sheet');
+            sheet.innerHTML = ''; // เคลียร์ของเก่าทิ้ง
+            
+            // เลือกชิ้นส่วนที่จะโคลน (หน้า หรือ หลัง)
+            const cardToClone = document.getElementById(side === 'front' ? 'cardFront' : 'cardBack');
+
+            // วนลูปสร้าง 10 ใบใส่กระดาษ A4
+            for (let i = 0; i < 10; i++) {
+                const clone = cardToClone.cloneNode(true);
+                clone.id = ''; // ลบ ID เพื่อไม่ให้ซ้ำกัน
+                sheet.appendChild(clone);
+            }
+
+            // ใส่ class ให้ body เพื่อกระตุ้น CSS สำหรับโหมดพิมพ์ A4 Sigel โดยเฉพาะ
+            document.body.classList.add('printing-a4');
+            
+            // เรียกคำสั่งพิมพ์ของเบราว์เซอร์
+            window.print();
+            
+            // ถอด class ออกเมื่อพิมพ์เสร็จ (หรือยกเลิกการพิมพ์) เพื่อให้กลับมาหน้าพรีวิวปกติ
+            document.body.classList.remove('printing-a4');
         }
     </script>
 </body>
