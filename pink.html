@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABO Business Card Generator - PDF Print Ready</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- QRious -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <!-- jsPDF สำหรับสร้างไฟล์ PDF ขนาด A4 แบบเป๊ะๆ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* กำหนดขนาดนามบัตรตามสัดส่วน 55x85 mm สำหรับ Preview */
+        .card-container {
+            width: 340px;
+            height: 525px;
+            position: relative;
+            overflow: hidden;
+            background-color: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        .content-layer {
+            position: absolute;
+            z-index: 10;
+        }
+        .border-gold {
+            border-color: #c5a059;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
+
+    <div class="mb-6 text-center">
+        <h1 class="text-3xl font-bold text-gray-800">ระบบสร้างนามบัตร ABO (Sigel Print)</h1>
+        <p class="text-gray-600 mt-2">ออกแบบและดาวน์โหลดเป็น PDF เพื่อพิมพ์ลงกระดาษ Sigel (10 ใบ/A4)</p>
+    </div>
+
+    <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- แผงควบคุม (ด้านซ้าย) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+            
+            <div class="p-5 bg-[#002f5f] text-white flex justify-between items-center">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#c5a059]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    จัดการข้อมูลและเตรียมพิมพ์
+                </h2>
+            </div>
+
+            <div class="p-6 overflow-y-auto no-scrollbar space-y-6">
+                <!-- ข้อมูลตัวอักษร -->
+                <div class="space-y-4">
+                    <h3 class="font-semibold text-gray-700 border-b pb-2">1. ข้อมูลส่วนตัว</h3>
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">ชื่อ-นามสกุล (บรรทัดที่ 1)</label>
+                        <input type="text" id="inputName" value="พิมลพรรณ ปัญญา" class="w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">บริการ / ความเชี่ยวชาญ (บรรทัดที่ 2)</label>
+                        <input type="text" id="inputStatus" value="🌿Nutrition • ✨Face Spa • ❤️ Health" class="w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">ข้อมูลติดต่อ 1 (บรรทัดที่ 3)</label>
+                            <input type="text" id="inputContact1" value="โทร. 081-234-5678" class="w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">ข้อมูลติดต่อ 2 (บรรทัดที่ 4)</label>
+                            <input type="text" id="inputContact2" value="LINE ID : nutcha.amway" class="w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Code & Profile -->
+                <div class="space-y-4 pt-2">
+                    <h3 class="font-semibold text-gray-700 border-b pb-2">2. รูปภาพและลิงก์</h3>
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">🔗 ลิงก์สำหรับ QR Code</label>
+                        <input type="text" id="inputQRLink" value="https://www.amway.co.th/" class="w-full rounded-lg border-blue-200 shadow-sm border p-2 bg-blue-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">📸 รูปโปรไฟล์ (จะถูกตัดเป็นวงกลม)</label>
+                        <input type="file" id="uploadProfile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-lg p-1">
+                    </div>
+                </div>
+
+                <!-- การตั้งค่าพิมพ์ (ใหม่!) -->
+                <div class="space-y-4 pt-2 bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    <h3 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                        ตั้งค่ากระดาษ Sigel DP830
+                    </h3>
+                    <p class="text-xs text-blue-700">ระบบตั้งค่าตามหน้าซองไว้แล้ว (ซ้าย 15mm, บน 10mm) แต่สามารถปรับชดเชยได้หากพรินเตอร์ของคุณดึงกระดาษคลาดเคลื่อน</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">ขอบซ้าย (Left Margin) mm</label>
+                            <input type="number" id="printMarginLeft" value="15" step="0.5" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm text-center">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">ขอบบน (Top Margin) mm</label>
+                            <input type="number" id="printMarginTop" value="10" step="0.5" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm text-center">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- การปรับแต่งตำแหน่ง (ปุ่มย่อ/ขยาย) -->
+                <div class="space-y-4 pt-2">
+                    <h3 class="font-semibold text-gray-500 text-sm flex items-center gap-2 cursor-pointer hover:text-gray-800" onclick="document.getElementById('adjustPanel').classList.toggle('hidden')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        ปรับแต่งตำแหน่งดีไซน์ (คลิกเพื่อแสดง)
+                    </h3>
+                    <div id="adjustPanel" class="space-y-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <label class="text-gray-500">เลื่อนรูปขึ้น-ลง (Profile Y)</label>
+                                <input type="range" id="profY" min="10" max="150" value="50" class="w-full accent-[#002f5f]">
+                            </div>
+                            <div>
+                                <label class="text-gray-500">ขนาดรูป (Profile Size)</label>
+                                <input type="range" id="profSize" min="100" max="250" value="165" class="w-full accent-[#002f5f]">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4 text-xs pt-2">
+                            <div>
+                                <label class="text-gray-500">เลื่อนข้อความขึ้น-ลง (Text Y)</label>
+                                <input type="range" id="textY" min="150" max="350" value="250" class="w-full accent-[#002f5f]">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-xs pt-2">
+                            <div>
+                                <label class="text-gray-500">ซ้าย-ขวา (QR X)</label>
+                                <input type="range" id="qrX" min="10" max="200" value="35" class="w-full accent-[#002f5f]">
+                            </div>
+                            <div>
+                                <label class="text-gray-500">ขึ้น-ลง (QR Y)</label>
+                                <input type="range" id="qrY" min="300" max="500" value="375" class="w-full accent-[#002f5f]">
+                            </div>
+                            <div>
+                                <label class="text-gray-500">ขนาด QR</label>
+                                <input type="range" id="qrSize" min="60" max="150" value="95" class="w-full accent-[#002f5f]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ปุ่ม Action -->
+            <div class="p-5 bg-gray-50 border-t flex flex-col sm:flex-row gap-3">
+                <button onclick="downloadImage()" class="w-full sm:w-1/3 bg-white text-[#002f5f] font-bold border-2 border-[#002f5f] py-3 px-4 rounded-xl hover:bg-gray-100 transition shadow-sm flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    โหลดรูป 1 ใบ
+                </button>
+                <button id="btnPdf" onclick="generatePDF()" class="w-full sm:w-2/3 bg-[#002f5f] text-white font-bold text-lg py-3 px-4 rounded-xl hover:bg-blue-900 transition shadow-md flex justify-center items-center gap-2 transform active:scale-[0.98]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#c5a059]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    สร้างไฟล์ PDF (A4 - 10 ใบ)
+                </button>
+            </div>
+        </div>
+
+        <!-- ส่วนแสดงผล (Preview) -->
+        <div class="lg:col-span-5 flex justify-center sticky top-8">
+            <div id="businessCard" class="card-container rounded-lg">
+                <!-- Layer 0: ภาพพื้นหลังของคุณ -->
+                <img src="https://lh3.googleusercontent.com/d/1E6Fnr-EIve_jl1D9ABgJlku3IeeAeBH0" crossorigin="anonymous" class="bg-layer" alt="Background Template">
+
+                <!-- Layer 1: รูปโปรไฟล์ -->
+                <div id="elProfile" class="content-layer rounded-full border-[3px] border-gold shadow-lg bg-white overflow-hidden" style="top: 50px; left: 50%; transform: translateX(-50%); width: 165px; height: 165px;">
+                    <img id="displayProfile" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80" alt="Profile" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Layer 2: ข้อมูลตัวอักษร -->
+                <div id="elText" class="content-layer w-full text-center flex flex-col items-center" style="top: 250px; left: 0;">
+                    <h1 id="displayName" class="text-[26px] font-[600] text-[#4a362a] leading-[1.1] tracking-wide mb-1">พิมลพรรณ ปัญญา</h1>
+                    <p id="displayStatus" class="text-[16px] font-[500] text-[#111111] leading-[1.2] mt-1 whitespace-nowrap">🌿Nutrition • ✨Face Spa • ❤️ Health</p>
+                    <div class="text-[17px] font-[400] text-[#111111] leading-[1.2] mt-1">
+                        <p id="displayContact1">โทร. 081-234-5678</p>
+                        <p id="displayContact2">LINE ID : nutcha.amway</p>
+                    </div>
+                </div>
+
+                <!-- Layer 3: QR Code & Text Group -->
+                <div id="elQRGroup" class="content-layer flex items-center gap-2" style="top: 375px; left: 35px;">
+                    <div id="elQR" class="bg-white p-1.5 border-[2px] border-[#b89a68] flex items-center justify-center shrink-0" style="width: 95px; height: 95px;">
+                        <canvas id="qrCanvas" class="w-full h-full"></canvas>
+                    </div>
+                    <div class="flex items-center whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[18px] w-[14px] text-[#4a362a]" viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="none">
+                            <path d="M20 2L4 12L20 22Z" />
+                        </svg>
+                        <span class="text-[#111111] font-[600] text-[22px] tracking-wide ml-1 mt-[2px]">ดูข้อมูลเพิ่มเติม</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal แจ้งเตือนการพิมพ์ -->
+    <div id="printModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-2xl p-6 md:p-8 max-w-lg w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">ไฟล์ PDF พร้อมแล้ว!</h3>
+                <p class="text-gray-600 mt-2">โปรดอ่านคำแนะนำด้านล่างเพื่อให้ตำแหน่งตรงกับรอยปรุพอดี</p>
+            </div>
+            
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-sm text-yellow-800 space-y-2 mb-6">
+                <p class="font-bold">⚠️ สำคัญมากก่อนสั่ง Print:</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>เลือกขนาดกระดาษเป็น <b>A4</b> เท่านั้น</li>
+                    <li>ตั้งค่า Scale (มาตราส่วน) เป็น <b>100%</b> หรือ <b>Actual Size (ขนาดจริง)</b></li>
+                    <li><b>ห้ามเลือก</b> Fit to Page (พอดีหน้ากระดาษ) หรือ Shrink to Fit เด็ดขาด</li>
+                    <li>แนะนำให้ลองพรินต์ใส่กระดาษ A4 ธรรมดาก่อน 1 แผ่น แล้วนำไปทาบกับแสงไฟคู่กับกระดาษ Sigel เพื่อเช็คตำแหน่งครับ</li>
+                </ul>
+            </div>
+            
+            <button onclick="document.getElementById('printModal').classList.add('hidden')" class="w-full bg-[#002f5f] text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-900 transition">
+                รับทราบ และปิดหน้าต่างนี้
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- ส่วนจัดการข้อมูล (เหมือนเดิม) ---
+        function updateText(inputId, displayId) {
+            document.getElementById(inputId).addEventListener('input', function(e) {
+                document.getElementById(displayId).textContent = e.target.value || ' ';
+            });
+        }
+        updateText('inputName', 'displayName');
+        updateText('inputStatus', 'displayStatus');
+        updateText('inputContact1', 'displayContact1');
+        updateText('inputContact2', 'displayContact2');
+
+        const qrInput = document.getElementById('inputQRLink');
+        const qrGenerator = new QRious({
+            element: document.getElementById('qrCanvas'),
+            value: qrInput.value,
+            size: 250,      
+            background: 'white',
+            foreground: '#000000', 
+            level: 'M'          
+        });
+        qrInput.addEventListener('input', function(e) {
+            qrGenerator.value = e.target.value || 'https://www.amway.co.th';
+        });
+
+        document.getElementById('uploadProfile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('displayProfile').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Sliders
+        const elProfile = document.getElementById('elProfile');
+        const elText = document.getElementById('elText');
+        const elQRGroup = document.getElementById('elQRGroup'); 
+        const elQR = document.getElementById('elQR');           
+
+        document.getElementById('profY').addEventListener('input', e => elProfile.style.top = `${e.target.value}px`);
+        document.getElementById('profSize').addEventListener('input', e => {
+            elProfile.style.width = `${e.target.value}px`;
+            elProfile.style.height = `${e.target.value}px`;
+        });
+        document.getElementById('textY').addEventListener('input', e => elText.style.top = `${e.target.value}px`);
+        document.getElementById('qrX').addEventListener('input', e => elQRGroup.style.left = `${e.target.value}px`);
+        document.getElementById('qrY').addEventListener('input', e => elQRGroup.style.top = `${e.target.value}px`);
+        document.getElementById('qrSize').addEventListener('input', e => {
+            elQR.style.width = `${e.target.value}px`;
+            elQR.style.height = `${e.target.value}px`;
+        });
+
+        // --- ส่วนดาวน์โหลดเป็นรูป 1 ใบ (สำรองไว้ใช้โพสต์โซเชียลได้) ---
+        function downloadImage() {
+            const cardElement = document.getElementById('businessCard');
+            const name = document.getElementById('inputName').value.trim() || 'User';
+            
+            html2canvas(cardElement, {
+                scale: 3, 
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Amway_Card_${name}.jpg`;
+                link.href = canvas.toDataURL("image/jpeg", 1.0);
+                link.click();
+            });
+        }
+
+        // --- ส่วนสร้างไฟล์ PDF สำหรับพรินต์ลง Sigel DP830 ---
+        window.jsPDF = window.jspdf.jsPDF; // อ้างอิง library
+
+        async function generatePDF() {
+            const cardElement = document.getElementById('businessCard');
+            const name = document.getElementById('inputName').value.trim() || 'User';
+            const btn = document.getElementById('btnPdf');
+            const originalText = btn.innerHTML;
+            
+            // แสดงสถานะโหลด
+            btn.innerHTML = '⏳ กำลังจัดเรียง PDF...';
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            try {
+                // 1. ถ่ายภาพนามบัตรด้วยความละเอียดสูง
+                const canvas = await html2canvas(cardElement, {
+                    scale: 4, // Scale 4 เพื่อความคมชัดระดับพรินต์
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null
+                });
+                const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+                // 2. สร้างเอกสาร PDF ขนาด A4 แนวตั้ง
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                // 3. ดึงค่าระยะขอบจากที่ตั้งค่าไว้ (ค่า Default อิงจากหลังกล่อง Sigel)
+                const leftMargin = parseFloat(document.getElementById('printMarginLeft').value) || 15;
+                const topMargin = parseFloat(document.getElementById('printMarginTop').value) || 10;
+                
+                // สัดส่วนนามบัตร
+                const cardWidth = 85;
+                const cardHeight = 55;
+                const gapX = 10; // ระยะห่างตรงกลางระหว่าง 2 คอลัมน์
+
+                // 4. วนลูปวาดรูป 10 ใบ (5 แถว 2 คอลัมน์)
+                for (let row = 0; row < 5; row++) {
+                    for (let col = 0; col < 2; col++) {
+                        const x = leftMargin + (col * (cardWidth + gapX));
+                        const y = topMargin + (row * cardHeight);
+                        
+                        pdf.addImage(imgData, 'JPEG', x, y, cardWidth, cardHeight);
+                    }
+                }
+
+                // 5. บันทึกและดาวน์โหลด
+                pdf.save(`Amway_Print_A4_${name}.pdf`);
+
+                // แสดง Modal เตือนการตั้งค่าพรินเตอร์
+                document.getElementById('printModal').classList.remove('hidden');
+
+            } catch (err) {
+                console.error("Error generating PDF:", err);
+                alert("เกิดข้อผิดพลาดในการสร้างไฟล์ PDF โปรดลองอีกครั้ง");
+            } finally {
+                // คืนค่าปุ่ม
+                btn.innerHTML = originalText;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>
