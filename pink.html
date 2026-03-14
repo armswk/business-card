@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABO Business Card Generator - Perfect Ratio & Square Corners</title>
+    <title>ABO Business Card - Perfect Ratio & Square</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ใช้ฟอนต์ Prompt -->
@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- QRious -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <!-- jsPDF สำหรับสร้างไฟล์ PDF ขนาด A4 แบบเป๊ะๆ -->
+    <!-- jsPDF สำหรับสร้างไฟล์ PDF ขนาด A4 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
@@ -20,27 +20,15 @@
             font-family: 'Prompt', sans-serif;
             background-color: #f3f4f6;
         }
-        /* กำหนดขนาดนามบัตรตามสัดส่วน 55x85 mm สำหรับ Preview */
+        /* กำหนดขนาดนามบัตรตามสัดส่วน 55x85 mm บังคับมุมเหลี่ยม */
         .card-container {
             width: 340px;
             height: 525px;
             position: relative;
             overflow: hidden;
             background-color: #ffffff;
+            border-radius: 0 !important; /* บังคับมุมฉาก 100% */
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            /* ลบ border-radius ออก เพื่อให้เป็นมุมเหลี่ยมสมบูรณ์ */
-        }
-        .bg-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            /* ตั้งค่าให้พื้นหลังจัด Cover เสมอ เพื่อไม่ให้รูปยืด */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
         }
         .content-layer {
             position: absolute;
@@ -61,8 +49,8 @@
 <body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
 
     <div class="mb-6 text-center">
-        <h1 class="text-3xl font-bold text-gray-800">ระบบสร้างนามบัตร ABO</h1>
-        <p class="text-gray-600 mt-2">แก้มุมเหลี่ยมสมบูรณ์ และจัดการสัดส่วนรูปภาพไม่ให้ยืด</p>
+        <h1 class="text-3xl font-bold text-gray-800">ระบบสร้างนามบัตร ABO (Perfect Ratio)</h1>
+        <p class="text-gray-600 mt-2">แก้มุมเหลี่ยมสมบูรณ์ จัดระดับข้อความกึ่งกลาง และป้องกันรูปยืด 100%</p>
     </div>
 
     <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -108,9 +96,15 @@
                         <label class="block text-sm text-gray-600 mb-1">🔗 ลิงก์สำหรับ QR Code</label>
                         <input type="text" id="inputQRLink" value="https://www.amway.co.th/" class="w-full rounded-lg border-blue-200 shadow-sm border p-2 bg-blue-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
                     </div>
-                    <div>
-                        <label class="block text-sm text-gray-600 mb-1">📸 รูปโปรไฟล์ (จะถูกตัดเป็นวงกลมอัตโนมัติ)</label>
-                        <input type="file" id="uploadProfile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-lg p-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">📸 รูปโปรไฟล์ (ตัดกลมให้ ไม่ยืด)</label>
+                            <input type="file" id="uploadProfile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-lg p-1">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">🖼️ เปลี่ยนพื้นหลัง (หากต้องการ)</label>
+                            <input type="file" id="uploadBackground" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-lg p-1">
+                        </div>
                     </div>
                 </div>
 
@@ -120,7 +114,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                         ตั้งค่ากระดาษ Sigel DP830
                     </h3>
-                    <p class="text-xs text-blue-700">ระบบจะทำการหมุนภาพเป็นแนวนอนให้อัตโนมัติ เพื่อให้พอดีกับรอยปรุของกระดาษ 85x55mm</p>
+                    <p class="text-xs text-blue-700">นามบัตรจะถูกหมุนเป็นแนวนอนให้อัตโนมัติ เพื่อลงล็อกกระดาษพอดี 100%</p>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1">ขอบซ้าย (Left Margin) mm</label>
@@ -182,22 +176,25 @@
                 </button>
                 <button id="btnPdf" onclick="generatePDF()" class="w-full sm:w-2/3 bg-[#002f5f] text-white font-bold text-lg py-3 px-4 rounded-xl hover:bg-blue-900 transition shadow-md flex justify-center items-center gap-2 transform active:scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#c5a059]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    สร้างไฟล์ PDF (หมุนอัตโนมัติ)
+                    สร้างไฟล์ PDF (Sigel DP830)
                 </button>
             </div>
         </div>
 
         <!-- ส่วนแสดงผล (Preview) -->
         <div class="lg:col-span-5 flex justify-center sticky top-8">
-            <!-- นำ rounded-lg ออก เพื่อให้เป็นนามบัตรมุมฉาก (มุมเหลี่ยม) -->
+            <!-- กรอบนามบัตร (ไม่มี border-radius เพื่อให้มุมฉาก 100%) -->
             <div id="businessCard" class="card-container">
-                <!-- Layer 0: ภาพพื้นหลัง (ใช้เทคนิค background-image Base64 เพื่อป้องกันการยืด) -->
-                <div id="bgLayerDiv" class="bg-layer bg-[#fcf6f4]"></div>
+                
+                <!-- Layer 0: พื้นหลัง (ใช้วิธีคำนวณสัดส่วนเอง ป้องกัน html2canvas ทำภาพยืด) -->
+                <div id="bgWrapper" style="position: absolute; width: 100%; height: 100%; overflow: hidden; z-index: 0; left: 0; top: 0; background-color: #fcf6f4;">
+                    <img id="bgImgReal" alt="" style="position: absolute; transform-origin: top left;">
+                </div>
 
-                <!-- Layer 1: รูปโปรไฟล์ -->
+                <!-- Layer 1: รูปโปรไฟล์ (วาดลง Canvas ป้องกันภาพยืด และทำเป็นวงกลม 100%) -->
                 <div id="elProfile" class="content-layer rounded-full border-[3px] border-gold shadow-lg bg-white overflow-hidden" 
                      style="top: 50px; left: 0; right: 0; margin: 0 auto; width: 165px; height: 165px;">
-                    <img id="displayProfile" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80" alt="Profile" class="w-full h-full object-cover">
+                    <canvas id="profileCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
                 </div>
 
                 <!-- Layer 2: ข้อมูลตัวอักษร -->
@@ -211,15 +208,17 @@
                 </div>
 
                 <!-- Layer 3: QR Code & Text Group -->
-                <div id="elQRGroup" class="content-layer flex items-center gap-2" style="top: 375px; left: 35px;">
+                <div id="elQRGroup" class="content-layer flex items-center gap-2.5" style="top: 375px; left: 35px;">
                     <div id="elQR" class="bg-white p-1.5 border-[2px] border-[#b89a68] flex items-center justify-center shrink-0" style="width: 95px; height: 95px;">
                         <canvas id="qrCanvas" class="w-full h-full"></canvas>
                     </div>
+                    <!-- แก้ไขการจัดวางลูกศรและข้อความให้ตรงกันเป๊ะ ไม่ให้เหมือนโดนเคาะ Enter -->
                     <div class="flex items-center whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[18px] w-[14px] text-[#4a362a]" viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[18px] w-[14px] text-[#4a362a]" style="position: relative; top: 2px;" viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="none">
                             <path d="M20 2L4 12L20 22Z" />
                         </svg>
-                        <span class="text-[#111111] font-[600] text-[22px] tracking-wide ml-1 mt-[2px]">ดูข้อมูลเพิ่มเติม</span>
+                        <!-- งัดข้อความขึ้นด้วย top: -6px และบังคับ line-height ให้กะทัดรัด -->
+                        <span class="text-[#111111] font-[600] text-[23px] tracking-wide ml-1.5" style="line-height: 1; position: relative; top: -11px;">ดูข้อมูลเพิ่มเติม</span>
                     </div>
                 </div>
             </div>
@@ -254,23 +253,95 @@
     </div>
 
     <script>
-        // โหลดภาพพื้นหลังตั้งแต่เริ่ม เพื่อแก้ปัญหาภาพยืด (object-fit) ตอน render
+        // -------------------------------------------------------------
+        // ระบบจัดการภาพ ไม่ให้ยืด 100% (Manual Crop Math)
+        // -------------------------------------------------------------
+        
+        // 1. ฟังก์ชันจัดพื้นหลัง
+        function setBackgroundReal(src) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function() {
+                const containerW = 340;
+                const containerH = 525;
+                // คำนวณ Scale ให้คลุมพื้นที่พอดี (เหมือน object-fit: cover)
+                const scale = Math.max(containerW / this.width, containerH / this.height);
+                const newW = this.width * scale;
+                const newH = this.height * scale;
+                
+                // จัดให้อยู่กึ่งกลาง
+                const left = (containerW - newW) / 2;
+                const top = (containerH - newH) / 2;
+                
+                const bgEl = document.getElementById('bgImgReal');
+                bgEl.src = src;
+                bgEl.style.width = `${newW}px`;
+                bgEl.style.height = `${newH}px`;
+                bgEl.style.left = `${left}px`;
+                bgEl.style.top = `${top}px`;
+            };
+            img.src = src;
+        }
+
+        // 2. ฟังก์ชันจัดรูปโปรไฟล์ (วาดลง Canvas ป้องกันบัก html2canvas)
+        function setProfileReal(src) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function() {
+                const canvas = document.getElementById('profileCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 300; // ความละเอียดภายใน
+                canvas.height = 300;
+                
+                // Crop ตรงกลางให้เป็นจัตุรัสพอดีเป๊ะ
+                const size = Math.min(this.width, this.height);
+                const sx = (this.width - size) / 2;
+                const sy = (this.height - size) / 2;
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(this, sx, sy, size, size, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = src;
+        }
+
+        // 3. รูปโปรไฟล์เริ่มต้น (กันรูปเปล่า)
+        function drawDefaultProfile() {
+            const canvas = document.getElementById('profileCanvas');
+            canvas.width = 300;
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillRect(0, 0, 300, 300);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.beginPath();
+            ctx.arc(150, 120, 50, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(150, 300, 110, Math.PI, 0);
+            ctx.fill();
+        }
+
+        // โหลดข้อมูลเมื่อเปิดเว็บ
         document.addEventListener('DOMContentLoaded', () => {
+            // โหลดเทมเพลตพื้นหลังต้นฉบับ
             const bgUrl = "https://lh3.googleusercontent.com/d/1E6Fnr-EIve_jl1D9ABgJlku3IeeAeBH0";
             fetch(bgUrl)
                 .then(res => res.blob())
                 .then(blob => {
                     const reader = new FileReader();
-                    reader.onloadend = () => {
-                        // แทรกเป็น Base64 ลงใน background-image ซึ่งตัดและจัด Cover ได้สมบูรณ์
-                        document.getElementById('bgLayerDiv').style.backgroundImage = `url(${reader.result})`;
-                    }
+                    reader.onloadend = () => setBackgroundReal(reader.result);
                     reader.readAsDataURL(blob);
                 })
                 .catch(err => console.error("Error loading background image:", err));
+
+            // โหลดรูปคนจำลอง
+            drawDefaultProfile();
         });
 
-        // --- ส่วนจัดการข้อมูล ---
+        // -------------------------------------------------------------
+        // ระบบอัปโหลดและผูกข้อมูล
+        // -------------------------------------------------------------
+        
         function updateText(inputId, displayId) {
             document.getElementById(inputId).addEventListener('input', function(e) {
                 document.getElementById(displayId).textContent = e.target.value || ' ';
@@ -299,7 +370,18 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    document.getElementById('displayProfile').src = event.target.result;
+                    setProfileReal(event.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('uploadBackground').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    setBackgroundReal(event.target.result);
                 }
                 reader.readAsDataURL(file);
             }
@@ -324,7 +406,10 @@
             elQR.style.height = `${e.target.value}px`;
         });
 
-        // --- โหลดรูป 1 ใบ ---
+        // -------------------------------------------------------------
+        // ระบบ Download Image / PDF
+        // -------------------------------------------------------------
+
         function downloadImage() {
             const cardElement = document.getElementById('businessCard');
             const name = document.getElementById('inputName').value.trim() || 'User';
@@ -333,7 +418,7 @@
                 scale: 3, 
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: null
+                backgroundColor: "#ffffff" // ป้องกันปัญหาขอบใส
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Amway_Card_${name}.jpg`;
@@ -342,7 +427,6 @@
             });
         }
 
-        // --- สร้างไฟล์ PDF (หมุนภาพ 90 องศาแก้ภาพยืด) ---
         window.jsPDF = window.jspdf.jsPDF;
 
         async function generatePDF() {
@@ -360,10 +444,10 @@
                     scale: 4, 
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: null
+                    backgroundColor: "#ffffff"
                 });
 
-                // 2. สร้าง Canvas ใหม่เพื่อทำการหมุนภาพ 90 องศา (Portrait -> Landscape)
+                // 2. สร้าง Canvas ใหม่เพื่อหมุนภาพ 90 องศา (Portrait -> Landscape)
                 const rotCanvas = document.createElement('canvas');
                 rotCanvas.width = origCanvas.height;
                 rotCanvas.height = origCanvas.width;
@@ -374,7 +458,6 @@
                 ctx.rotate(90 * Math.PI / 180);
                 ctx.drawImage(origCanvas, -origCanvas.width / 2, -origCanvas.height / 2);
 
-                // ดึงข้อมูลภาพที่หมุนแล้ว
                 const imgDataLandscape = rotCanvas.toDataURL("image/jpeg", 1.0);
 
                 // 3. สร้าง PDF (A4)
@@ -392,17 +475,16 @@
                 const sigelSlotHeight = 55;
                 const gapX = 10; 
 
-                // 4. นำภาพที่หมุนเป็นแนวนอนแล้ว ไปวางในช่องแนวนอน 85x55
+                // 4. วางรูปลง 10 ช่อง
                 for (let row = 0; row < 5; row++) {
                     for (let col = 0; col < 2; col++) {
                         const x = leftMargin + (col * (sigelSlotWidth + gapX));
                         const y = topMargin + (row * sigelSlotHeight);
-                        
                         pdf.addImage(imgDataLandscape, 'JPEG', x, y, sigelSlotWidth, sigelSlotHeight);
                     }
                 }
 
-                // 5. ดาวน์โหลด PDF
+                // 5. โหลด PDF
                 pdf.save(`Amway_Print_A4_${name}.pdf`);
                 document.getElementById('printModal').classList.remove('hidden');
 
